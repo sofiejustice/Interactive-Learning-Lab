@@ -1,0 +1,498 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Clutch — Reflection Activity</title>
+<style>html,body{margin:0;padding:0;background:#FCFCFC;}</style>
+</head>
+<body>
+
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Albert+Sans:wght@400;500;600;700&display=swap">
+
+<style>
+/* All rules scoped under .cl-activity so nothing leaks into the Rise page. */
+.cl-activity {
+  --cl-purple: #7146B5;
+  --cl-purple-dark: #643D9D;
+  --cl-purple-darker: #563384;
+  --cl-purple-ring: rgba(113, 70, 181, 0.16);
+  --cl-lavender: #EEE6F5;
+  --cl-ink: #0A074D;          /* Dark Blue — used instead of black for text */
+  --cl-eyebrow: #6567A1;      /* Eyebrow Grey — small field labels */
+  --cl-placeholder: #9A9CB8;
+  --cl-border: #D9D9D9;
+  --cl-card: #FFFFFF;
+  --cl-surface: #FCFCFC;      /* Off White — instead of true white */
+  --cl-red: #D63333;
+  --cl-red-surface: #FCEFEF;
+  --cl-green: #008000;
+
+  box-sizing: border-box;
+  font-family: "Albert Sans", system-ui, -apple-system, sans-serif;
+  color: var(--cl-ink);
+  background: var(--cl-surface);
+  display: flex;
+  justify-content: center;
+  padding: 24px 16px;
+  width: 100%;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+.cl-activity *,
+.cl-activity *::before,
+.cl-activity *::after { box-sizing: border-box; }
+
+.cl-card {
+  width: 100%;
+  max-width: 640px;
+  background: var(--cl-card);
+  border: 1px solid var(--cl-border);
+  border-radius: 16px;
+  box-shadow: 0px 4px 24px -2px rgba(47, 57, 76, 0.12);
+  padding: 32px;
+}
+@media (max-width: 520px) {
+  .cl-activity { padding: 16px 12px; }
+  .cl-card { padding: 22px; border-radius: 14px; }
+}
+
+/* ---- Prompt ---- */
+.cl-prompt {
+  margin: 0 0 22px;
+  font-size: 21px;
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
+  text-wrap: pretty;
+  color: var(--cl-ink);
+}
+
+/* ---- Floating-label fields ---- */
+.cl-field { position: relative; margin-bottom: 18px; }
+
+.cl-input,
+.cl-textarea {
+  width: 100%;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--cl-ink);
+  background: var(--cl-card);
+  border: 2px solid var(--cl-border);
+  border-radius: 16px;
+  outline: none;
+  transition: border-color 200ms cubic-bezier(0,0,0.2,1),
+              box-shadow 200ms cubic-bezier(0,0,0.2,1);
+}
+.cl-input {
+  height: 64px;
+  padding: 24px 16px 8px;
+}
+.cl-textarea {
+  min-height: 122px;
+  padding: 28px 16px 12px;
+  line-height: 1.5;
+  resize: vertical;
+}
+/* Native placeholder hint stays hidden until the field is focused
+   (the floating label does double duty as the resting placeholder). */
+.cl-input::placeholder,
+.cl-textarea::placeholder { color: transparent; transition: color 200ms cubic-bezier(0,0,0.2,1); }
+.cl-input:focus::placeholder,
+.cl-textarea:focus::placeholder { color: var(--cl-placeholder); }
+
+.cl-input:focus,
+.cl-textarea:focus {
+  border-color: var(--cl-ink);
+  box-shadow: 0 0 0 4px var(--cl-purple-ring);
+}
+
+/* Floating label — rests centered (acts as placeholder), floats up on focus/fill */
+.cl-label {
+  position: absolute;
+  left: 18px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 16px;
+  font-weight: 400;
+  color: var(--cl-placeholder);
+  pointer-events: none;
+  transform-origin: left top;
+  transition: all 200ms cubic-bezier(0,0,0.2,1);
+}
+.cl-field--area .cl-label { top: 20px; transform: none; }
+
+.cl-input:focus + .cl-label,
+.cl-input:not(:placeholder-shown) + .cl-label,
+.cl-textarea:focus + .cl-label,
+.cl-textarea:not(:placeholder-shown) + .cl-label {
+  top: 11px;
+  transform: none;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  color: var(--cl-eyebrow);
+}
+
+/* Error variants */
+.cl-input.cl-invalid,
+.cl-textarea.cl-invalid { border-color: var(--cl-red); }
+.cl-input.cl-invalid:focus,
+.cl-textarea.cl-invalid:focus { box-shadow: 0 0 0 4px rgba(214,51,51,0.14); }
+
+.cl-fielderr {
+  display: none;
+  margin: 7px 2px 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--cl-red);
+}
+.cl-fielderr.cl-show { display: block; }
+
+/* Counter under textarea */
+.cl-counter {
+  margin: 6px 2px 0;
+  font-size: 12px;
+  color: var(--cl-placeholder);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ---- Submit button ---- */
+.cl-submit {
+  width: 100%;
+  height: 56px;
+  margin-top: 6px;
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: #fff;
+  background: var(--cl-purple);
+  border: none;
+  border-radius: 16px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  white-space: nowrap;
+  transition: background 200ms cubic-bezier(0,0,0.2,1);
+}
+.cl-submit:hover { background: var(--cl-purple-dark); }
+.cl-submit:active { background: var(--cl-purple-darker); }
+.cl-submit:disabled {
+  background: #F0EEF6;
+  color: #A9A6C2;
+  cursor: not-allowed;
+}
+
+/* In-flight spinner */
+.cl-spinner {
+  width: 18px; height: 18px;
+  border: 2.5px solid rgba(255,255,255,0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: cl-spin 0.7s linear infinite;
+  display: none;
+}
+.cl-submit.cl-loading .cl-spinner { display: inline-block; }
+@keyframes cl-spin { to { transform: rotate(360deg); } }
+
+/* Top-level error banner (network failure) */
+.cl-banner {
+  display: none;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 18px;
+  padding: 12px 14px;
+  background: var(--cl-red-surface);
+  border-radius: 12px;
+  color: var(--cl-red);
+  font-size: 14px;
+  line-height: 1.4;
+}
+.cl-banner.cl-show { display: flex; }
+.cl-banner svg { width: 20px; height: 20px; flex: none; margin-top: 1px; }
+
+/* ---- Success state ---- */
+.cl-success { display: none; text-align: center; padding: 14px 4px 10px; }
+.cl-success.cl-show { display: block; }
+.cl-success-badge {
+  width: 64px; height: 64px;
+  margin: 0 auto 18px;
+  border-radius: 50%;
+  background: var(--cl-lavender);
+  color: var(--cl-purple);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.cl-success-badge svg { width: 38px; height: 38px; }
+.cl-success-title {
+  margin: 0 0 8px;
+  font-size: 21px;
+  font-weight: 700;
+  letter-spacing: -0.01em;
+  color: var(--cl-ink);
+}
+.cl-success-sub {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.45;
+  color: var(--cl-eyebrow);
+}
+
+/* Read-only review of the saved response (toggle + box) */
+.cl-review-toggle {
+  margin-top: 16px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--cl-purple);
+  background: transparent;
+  border: none;
+  border-radius: 10px;
+  padding: 9px 14px;
+  cursor: pointer;
+  transition: background 200ms cubic-bezier(0,0,0.2,1);
+}
+.cl-review-toggle:hover { background: rgba(113,70,181,0.10); }
+.cl-review {
+  display: none;
+  margin: 12px auto 0;
+  text-align: left;
+  background: var(--cl-lavender);
+  border-radius: 12px;
+  padding: 14px 16px;
+}
+.cl-review.cl-open { display: block; }
+.cl-review-label {
+  margin: 0 0 6px;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--cl-eyebrow);
+}
+.cl-review-text {
+  margin: 0;
+  font-size: 15px;
+  line-height: 1.5;
+  color: var(--cl-ink);
+  white-space: pre-wrap;
+  word-break: break-word;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.cl-sr {
+  position: absolute; width: 1px; height: 1px;
+  padding: 0; margin: -1px; overflow: hidden;
+  clip: rect(0,0,0,0); white-space: nowrap; border: 0;
+}
+</style>
+
+<div class="cl-activity">
+  <div class="cl-card">
+
+    <!-- Error banner (network failure) -->
+    <div class="cl-banner" id="cl-banner" role="alert">
+      <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M236.8,188.09,149.35,36.22h0a24.76,24.76,0,0,0-42.7,0L19.2,188.09a23.51,23.51,0,0,0,0,23.72A24.35,24.35,0,0,0,40.55,224h174.9a24.35,24.35,0,0,0,21.33-12.19A23.51,23.51,0,0,0,236.8,188.09ZM222.93,203.8a8.5,8.5,0,0,1-7.48,4.2H40.55a8.5,8.5,0,0,1-7.48-4.2,7.59,7.59,0,0,1,0-7.72L120.52,44.21a8.75,8.75,0,0,1,15,0l87.45,151.87A7.59,7.59,0,0,1,222.93,203.8ZM120,144V104a8,8,0,0,1,16,0v40a8,8,0,0,1-16,0Zm20,36a12,12,0,1,1-12-12A12,12,0,0,1,140,180Z"></path></svg>
+      <span>Something went wrong — please try again.</span>
+    </div>
+
+    <!-- Form -->
+    <form id="cl-form" novalidate>
+      <p class="cl-prompt" id="cl-prompt"></p>
+
+      <div class="cl-field cl-field--area">
+        <textarea class="cl-textarea" id="cl-response" placeholder="Type your response here..." aria-describedby="cl-response-err cl-counter"></textarea>
+        <label class="cl-label" for="cl-response" id="cl-response-label">Your response</label>
+        <p class="cl-fielderr" id="cl-response-err">Enter a response to continue.</p>
+        <p class="cl-counter" id="cl-counter">0 characters</p>
+      </div>
+
+      <button class="cl-submit" id="cl-submit" type="submit">
+        <span class="cl-spinner" aria-hidden="true"></span>
+        <span id="cl-submit-text">Submit response</span>
+      </button>
+    </form>
+
+    <!-- Success -->
+    <div class="cl-success" id="cl-success" role="status" aria-live="polite">
+      <div class="cl-success-badge">
+        <svg viewBox="0 0 256 256" fill="currentColor" aria-hidden="true"><path d="M173.66,98.34a8,8,0,0,1,0,11.32l-56,56a8,8,0,0,1-11.32,0l-24-24a8,8,0,0,1,11.32-11.32L112,148.69l50.34-50.35A8,8,0,0,1,173.66,98.34ZM232,128A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"></path></svg>
+      </div>
+      <p class="cl-success-title" id="cl-success-title">Thanks! Your response has been saved.</p>
+      <p class="cl-success-sub" id="cl-success-sub">You can continue with the rest of the module.</p>
+      <button class="cl-review-toggle" id="cl-review-toggle" type="button">View your response</button>
+      <div class="cl-review" id="cl-review">
+        <p class="cl-review-label">Your response</p>
+        <p class="cl-review-text" id="cl-review-text"></p>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+(function () {
+  /* ===================== CONFIG — edit per course ===================== */
+  var QUESTION    = "Before we go further: What happens after a member submits a loan application at a credit union? Who do you imagine is on the other side of that decision? What roles do they play?";
+  var COURSE_NAME = "Lending Personas";
+  var WEBHOOK_URL = "https://hooks.zapier.com/hooks/catch/26045964/43bm6v7/";
+  /* =================================================================== */
+
+  /* --- Learner name: pulled silently from SCORM 2004 (Docebo), never shown --- */
+  function findSCORMAPI(win) {
+    var attempts = 0;
+    while (win.API_1484_11 == null && win.parent != null && win.parent != win) {
+      attempts++;
+      if (attempts > 7) return null;
+      win = win.parent;
+    }
+    return win.API_1484_11 || null;
+  }
+  function getLearnerName() {
+    try {
+      var api = findSCORMAPI(window);
+      if (api) {
+        var name = api.GetValue("cmi.learner_name");
+        if (name && name !== "") return name;
+      }
+    } catch (e) {}
+    return "Unknown";
+  }
+  var LEARNER_NAME = getLearnerName();
+
+  var form     = document.getElementById('cl-form');
+  var respEl   = document.getElementById('cl-response');
+  var respErr  = document.getElementById('cl-response-err');
+  var counter  = document.getElementById('cl-counter');
+  var submit   = document.getElementById('cl-submit');
+  var submitTx = document.getElementById('cl-submit-text');
+  var banner   = document.getElementById('cl-banner');
+  var success  = document.getElementById('cl-success');
+  var sTitle   = document.getElementById('cl-success-title');
+  var sSub     = document.getElementById('cl-success-sub');
+  var review   = document.getElementById('cl-review');
+  var reviewTx = document.getElementById('cl-review-text');
+  var reviewBtn= document.getElementById('cl-review-toggle');
+
+  // Inject the configured question text into the prompt above the box.
+  document.getElementById('cl-prompt').textContent = QUESTION;
+
+  /* --- Persistence (localStorage). Wrapped in try/catch so a sandboxed Rise
+         iframe that blocks storage degrades gracefully instead of throwing.
+         Keyed by course + question so multiple activities never collide. --- */
+  var KEY_BASE  = 'clutch_reflection::' + COURSE_NAME + '::' + QUESTION;
+  var KEY_DONE  = KEY_BASE + '::submitted';
+  var KEY_DRAFT = KEY_BASE + '::draft';
+  function storeGet(k){ try { return window.localStorage.getItem(k); } catch (e) { return null; } }
+  function storeSet(k,v){ try { window.localStorage.setItem(k, v); } catch (e) {} }
+  function storeDel(k){ try { window.localStorage.removeItem(k); } catch (e) {} }
+
+  // Live character count (subtle).
+  function updateCounter() {
+    var n = respEl.value.length;
+    counter.textContent = n + (n === 1 ? ' character' : ' characters');
+  }
+  respEl.addEventListener('input', updateCounter);
+
+  // Reveal the submitted state and load the saved response into the review box.
+  function showSubmitted(text, returning) {
+    form.style.display = 'none';
+    banner.classList.remove('cl-show');
+    if (returning) {
+      sTitle.textContent = "You've already responded";
+      sSub.textContent = "Your response to this question is saved.";
+    }
+    reviewTx.textContent = text || '';
+    success.classList.add('cl-show');
+  }
+
+  // Toggle the read-only review of their response.
+  reviewBtn.addEventListener('click', function () {
+    var open = review.classList.toggle('cl-open');
+    reviewBtn.textContent = open ? 'Hide your response' : 'View your response';
+  });
+
+  // On load: if already submitted, lock to the submitted state; otherwise
+  // restore any unsent draft text.
+  (function restore() {
+    var done = storeGet(KEY_DONE);
+    if (done) { showSubmitted(done, true); return; }
+    var draft = storeGet(KEY_DRAFT);
+    if (draft) { respEl.value = draft; }
+    updateCounter();
+  })();
+
+  // Save an unsent draft as they type.
+  respEl.addEventListener('input', function () { storeSet(KEY_DRAFT, respEl.value); });
+
+  // Clear a field's error styling as the learner corrects it.
+  function clearError(el, errEl) {
+    el.classList.remove('cl-invalid');
+    errEl.classList.remove('cl-show');
+  }
+  respEl.addEventListener('input', function () { clearError(respEl, respErr); });
+
+  function showError(el, errEl) {
+    el.classList.add('cl-invalid');
+    errEl.classList.add('cl-show');
+  }
+
+  form.addEventListener('submit', function (e) {
+    e.preventDefault();
+    banner.classList.remove('cl-show');
+
+    var resp = respEl.value.trim();
+    if (!resp) {
+      showError(respEl, respErr);
+      respEl.focus();
+      return;
+    }
+
+    // In-flight state
+    submit.disabled = true;
+    submit.classList.add('cl-loading');
+    submitTx.textContent = 'Submitting…';
+
+    var payload = {
+      employee_name: LEARNER_NAME,
+      response: resp,
+      question: QUESTION,
+      course: COURSE_NAME
+    };
+
+    // no-cors: the browser won't block the cross-origin Zapier POST, but we
+    // also can't read the response — so we confirm optimistically after ~1s.
+    var sent = fetch(WEBHOOK_URL, {
+      method: 'POST',
+      mode: 'no-cors',
+      body: JSON.stringify(payload)
+    });
+    var wait = new Promise(function (r) { setTimeout(r, 1000); });
+
+    Promise.all([sent, wait]).then(function () {
+      storeSet(KEY_DONE, resp);   // remember the submission across reloads
+      storeDel(KEY_DRAFT);
+      showSubmitted(resp, false);
+    }).catch(function () {
+      // Network failure — let the learner retry.
+      submit.disabled = false;
+      submit.classList.remove('cl-loading');
+      submitTx.textContent = 'Submit response';
+      banner.classList.add('cl-show');
+    });
+  });
+})();
+</script>
+
+</body>
+</html>
