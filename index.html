@@ -6,93 +6,218 @@
 
   <title>Interactive Learning Lab | Sofie Justice</title>
 
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&display=swap"
+    rel="stylesheet"
+  >
+
   <style>
+    :root {
+      /* Page colors */
+      --page-background: #FCFCFC;
+      --page-title: #0A074D;
+      --page-description: #6567A1;
+
+      /* Card colors */
+      --card-background: #FFFFFF;
+      --card-border: #DDD5EE;
+      --card-title: #0A074D;
+      --card-description: #5F627A;
+
+      /* Link colors */
+      --link: #7146B5;
+      --link-hover: #563384;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
     body {
-      max-width: 900px;
-      margin: 0 auto;
-      padding: 48px 24px;
-      font-family: Arial, sans-serif;
+      margin: 0;
+      background: var(--page-background);
+      color: var(--card-description);
+      font-family: "Montserrat", sans-serif;
       line-height: 1.6;
-      color: #5C4C57;
-      background: #398491;
+    }
+
+    main {
+      width: min(920px, calc(100% - 40px));
+      margin: 0 auto;
+      padding: 64px 0;
+    }
+
+    .page-header {
+      max-width: 720px;
+      margin-bottom: 44px;
     }
 
     h1 {
-      margin-bottom: 8px;
+      margin: 0 0 12px;
+      color: var(--page-title);
+      font-size: clamp(2rem, 5vw, 3.5rem);
+      line-height: 1.1;
+      letter-spacing: -0.04em;
     }
 
     .intro {
-      margin-bottom: 40px;
+      margin: 0;
+      color: var(--page-description);
+      font-size: 1.05rem;
+      line-height: 1.7;
+    }
+
+    .project-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 20px;
     }
 
     .project {
-      margin-bottom: 18px;
-      padding: 22px;
-      border: 1px solid #ddd;
-      border-radius: 14px;
-      background: white;
+      display: flex;
+      flex-direction: column;
+      min-height: 230px;
+      padding: 26px;
+      background: var(--card-background);
+      border: 1px solid var(--card-border);
+      border-radius: 18px;
+      box-shadow: 0 8px 28px rgba(10, 7, 77, 0.06);
+      transition:
+        transform 180ms ease,
+        box-shadow 180ms ease,
+        border-color 180ms ease;
+    }
+
+    .project:hover {
+      transform: translateY(-3px);
+      border-color: #C5B4DC;
+      box-shadow: 0 14px 34px rgba(10, 7, 77, 0.1);
     }
 
     .project h2 {
-      margin-top: 0;
-      margin-bottom: 8px;
+      margin: 0 0 10px;
+      color: var(--card-title);
+      font-size: 1.15rem;
+      line-height: 1.35;
     }
 
     .project p {
-      margin-top: 0;
+      margin: 0 0 24px;
+      color: var(--card-description);
+      font-size: 0.94rem;
     }
 
     .project a {
-      color: #7146B5;
-      font-weight: bold;
+      margin-top: auto;
+      color: var(--link);
+      font-weight: 700;
+      text-decoration: none;
+    }
+
+    .project a:hover,
+    .project a:focus-visible {
+      color: var(--link-hover);
+      text-decoration: underline;
+    }
+
+    @media (max-width: 700px) {
+      main {
+        padding: 42px 0;
+      }
+
+      .project-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .project {
+        min-height: auto;
+      }
     }
   </style>
 </head>
 
 <body>
+  <main>
+    <header class="page-header">
+      <h1>Interactive Learning Lab</h1>
 
-  <h1>Interactive Learning Lab</h1>
-  
-  <p class="intro">
-    A collection of interactive learning experiences and prototypes
-    designed by Sofie Justice.
-  </p>
-  
-  <div class="project">
-    <h2>Lending Personas</h2>
-    <p>Meet lending-team personas through an interactive activity.</p>
-    <a href="Lending%20Personas.html">Open experience →</a>
-  </div>
+      <p class="intro">
+        A collection of interactive learning experiences, prototypes,
+        and experiments designed by Sofie Justice.
+      </p>
+    </header>
 
-  <div class="project">
-    <h2>Data Insights Best Practices</h2>
-    <p>Understand how to interpret graphs and data in a data insights hub.</p>
-    <a href="datainsightsbestpractices.html">Open hub →</a>
-  </div>
+    <section class="project-grid" aria-label="Interactive learning projects">
 
-  <div class="project">
-    <h2>Application Lifecycle Interactive</h2>
-    <p>Explore stages and statuses in the application lifecycle.</p>
-    <a href="Application%20Lifecycle%20Interactive.html">Open process interactive →</a>
-  </div>
+      <article class="project">
+        <h2>Data Insights Best Practices</h2>
+        <p>
+          An interactive resource hub for exploring data-insights concepts
+          and practical guidance.
+        </p>
+        <a href="datainsightsbestpractices.html">
+          Open interactive →
+        </a>
+      </article>
 
-  <div class="project">
-    <h2>Journey of a Loan</h2>
-    <p>Follow the traditional journey of a loan through its major stages.</p>
-    <a href="Journey%20of%20a%20Loan.html">Open timeline interactive →</a>
-  </div>
+      <article class="project">
+        <h2>Application Lifecycle Interactive</h2>
+        <p>
+          Explore the stages, statuses, and possible paths within the
+          application lifecycle.
+        </p>
+        <a href="Application%20Lifecycle%20Interactive.html">
+          Open interactive →
+        </a>
+      </article>
 
-  <div class="project">
-    <h2>Text Input Question</h2>
-    <p>An interactive reflection and text-input activity.</p>
-    <a href="Text%20Input%20Question.html">Open text input interactive →</a>
-  </div>
+      <article class="project">
+        <h2>Journey of a Loan</h2>
+        <p>
+          Follow a traditional loan through its major stages and decision
+          points.
+        </p>
+        <a href="Journey%20of%20a%20Loan.html">
+          Open interactive →
+        </a>
+      </article>
 
-  <div class="project">
-    <h2>Text Input Question Reveal</h2>
-    <p>A question-and-answer reveal interaction.</p>
-    <a href="Text%20Input%20Question%20Reveal.html">Open interactive →</a>
-  </div>
+      <article class="project">
+        <h2>Lending Personas</h2>
+        <p>
+          Meet lending-team personas through an interactive first-impressions
+          activity.
+        </p>
+        <a href="Lending%20Personas.html">
+          Open interactive →
+        </a>
+      </article>
 
+      <article class="project">
+        <h2>Text Input Question</h2>
+        <p>
+          A reflection activity that invites learners to formulate and submit
+          a written response.
+        </p>
+        <a href="Text%20Input%20Question.html">
+          Open interactive →
+        </a>
+      </article>
+
+      <article class="project">
+        <h2>Text Input Question Reveal</h2>
+        <p>
+          An interactive question-and-answer experience with a guided response
+          reveal.
+        </p>
+        <a href="Text%20Input%20Question%20Reveal.html">
+          Open interactive →
+        </a>
+      </article>
+
+    </section>
+  </main>
 </body>
 </html>
